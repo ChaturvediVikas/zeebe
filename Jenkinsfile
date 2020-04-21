@@ -4,6 +4,11 @@
 def buildName = "${env.JOB_BASE_NAME.replaceAll("%2F", "-").replaceAll("\\.", "-").take(20)}-${env.BUILD_ID}"
 
 pipeline {
+
+    triggers {
+        cron('@hourly')
+    }
+
     agent {
       kubernetes {
         cloud 'zeebe-ci'
@@ -19,7 +24,8 @@ pipeline {
     }
 
     options {
-        buildDiscarder(logRotator(daysToKeepStr: '-1', numToKeepStr: '10'))
+        buildDiscarder(logRotator(daysToKeepStr: '3', numToKeepStr: '-1'))
+
         timestamps()
         timeout(time: 45, unit: 'MINUTES')
     }
